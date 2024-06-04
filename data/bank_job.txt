@@ -1,0 +1,15 @@
+white-collar, employed
+blue-collar, employed
+self-employed,employed
+admin., white-collar
+unknown, other
+unemployed, other
+management, white-collar
+housemaid, blue-collar
+entrepreneur, self-employed
+student, other
+blue-collar, blue-collar
+self-employed, self-employed
+retired, other
+technician, blue-collar
+services, blue-collar
