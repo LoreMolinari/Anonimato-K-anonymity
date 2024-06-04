@@ -56,7 +56,7 @@ Parametri consigliati per eseguire mondrian sul dataset bank sono: k = 3:
 python main.py --mondrian --k 3
 ```
 
-Le configurazioni si trovano in `default_data_config` e `default_data_configB` rispettivamente in [utils/data_loader](utils/data_loader) e [utils/data_loader_bank](utils/data_loader_bank), menter i risultati sono salvati nella directory [results](./results/) 
+Le configurazioni si trovano in `default_data_config` e `default_data_configB` rispettivamente in [utils/data_loader](utils/data_loader.py) e [utils/data_loader_bank](utils/data_loader_bank.py), mentre i risultati sono salvati nella directory [results](./results/) 
 
 ## Programma:
 
@@ -338,9 +338,9 @@ In conclusione, entrambi gli algoritmi sono buoni strumenti per poter ottenere i
 
 
 ## References
-[1] S. De Capitani di Vimercati et al. “k-Anonymity: From Theory to Applications”. In: Transactions on Data Privacy 16.1 (Jan. 2023), pp. 25–49.
-[2] Differential privacy. Vol. 2006. ICALP, 2006, pp. 1–12. url: [https://link.springer.com/chapter/10.1007/11787006_1](https://link.springer.com/chapter/10.1007/11787006_1).
-[3] Ninghui Li, Tiancheng Li, and Suresh Venkatasubramanian. “t-closeness: Privacy beyond k-anonymity and l-diversity”. In: 2007 IEEE 23rd international conference on data engineering. IEEE. 2006, pp. 106–115.
-[4] Ashwin Machanavajjhala et al. “L-diversity: Privacy beyond k-anonymity.” In: ACM Trans. Knowl. Discov. Data 1.1 (2007), p. 3.
-[5] P. Samarati. “Protecting Respondents’ Identities in Microdata Release”.In: IEEE Transactions on Knowledge and Data Engineering (TKDE) 13.6 (Nov. 2001), pp. 1010–1027.
-[6] Per la costruzione di questo studio sull'anonimizzazione dei dati e il K-anonimato mi sono basato sulla struttura e gli algoritmi implementati per K-Anonymity e Data Privacy [https://github.com/ltzheng/data-privacy.git](https://github.com/ltzheng/data-privacy.git) di Longtao Zheng [ltzheng](https://github.com/ltzheng)
+1. [1] S. De Capitani di Vimercati et al. “k-Anonymity: From Theory to Applications”. In: Transactions on Data Privacy 16.1 (Jan. 2023), pp. 25–49.
+2. [2] Differential privacy. Vol. 2006. ICALP, 2006, pp. 1–12. url: [https://link.springer.com/chapter/10.1007/11787006_1](https://link.springer.com/chapter/10.1007/11787006_1).
+3. [3] Ninghui Li, Tiancheng Li, and Suresh Venkatasubramanian. “t-closeness: Privacy beyond k-anonymity and l-diversity”. In: 2007 IEEE 23rd international conference on data engineering. IEEE. 2006, pp. 106–115.
+4. [4] Ashwin Machanavajjhala et al. “L-diversity: Privacy beyond k-anonymity.” In: ACM Trans. Knowl. Discov. Data 1.1 (2007), p. 3.
+5. [5] P. Samarati. “Protecting Respondents’ Identities in Microdata Release”.In: IEEE Transactions on Knowledge and Data Engineering (TKDE) 13.6 (Nov. 2001), pp. 1010–1027.
+6. [6] Per la costruzione di questo studio sull'anonimizzazione dei dati e il K-anonimato mi sono basato sulla struttura e gli algoritmi implementati per K-Anonymity e Data Privacy [https://github.com/ltzheng/data-privacy.git](https://github.com/ltzheng/data-privacy.git) di Longtao Zheng [ltzheng](https://github.com/ltzheng)
