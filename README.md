@@ -8,7 +8,7 @@
 
 - adult\_\*.txt: ci sono 2 stringhe in ogni riga, separate da una virgola. Quella a sinistra rappresenta il nodo figlio, e quella a destra il nodo genitore, servono a formare le gerarchie per l'esecuzione dell'algoritmo Samarati per il k-anonimato.
 
-- [bank.csv](inserisci URL)
+- [bank.csv](https://archive.ics.uci.edu/dataset/222/bank+marketing)
 
   Gli attributi sono: 'age', 'job', 'marital', 'education', 'default', 'balance', 'housing', 'loan', 'contact', 'day', 'month', 'duration', 'campaign', 'pdays', 'previous', 'poutcome', 'y'
 
