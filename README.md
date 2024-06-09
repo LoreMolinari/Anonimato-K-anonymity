@@ -336,6 +336,8 @@ L'analisi delle prestazioni in base a valori scelti di k e maxsup evidenzia che 
 
 In conclusione, entrambi gli algoritmi sono buoni strumenti per poter ottenere il k-anonimato, in particolare è bene però evidenziare che l'algoritmo per il k-anonimato Mondrian è più veloce nell'esecuzione dell'algoritmo Samarati e permette di raggiungere una metrica di perdita inferiore.
 
+Per maggiori informazioni consultare il documento PDF [Elaborato K-Anonimato - Molinari Lorenzo](Elaborato-MolinariLorenzo_K_Anonimity.pdf)
+
 
 ## References
 1. [1] S. De Capitani di Vimercati et al. “k-Anonymity: From Theory to Applications”. In: Transactions on Data Privacy 16.1 (Jan. 2023), pp. 25–49.
