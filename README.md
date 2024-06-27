@@ -329,6 +329,146 @@ Può anche essere esgutia l'esecuzione dell'algoritmo Mondrian sui quasi-identif
 Ad esempio l'attributo `job` nel dataset `Bank` può assumere i valori `admin., unknown, unemployed, management, housemaid, entrepreneur, student, blue-collar, self-employed, retired, technician, services` che viene codificato come `[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]`, oppure l'attributo `maritial` nel dataset `Bank` può assumere i valori `married, single, divorce` che viene codificato come `[0, 1, 2]`.
 
 
+## Test di Performance di Accesso
+
+Per valutare l'impatto dell'anonimizzazione sulle prestazioni di accesso ai dati, è stato condotto un test di performance sull'accesso ai dati del database creato in memoria locale. Il test ha permesso di confrontare i tempi di accesso e il numero di righe restituite per query simili su tre tabelle: la tabella originale, la tabella anonimizzata con l'algoritmo Samarati e la tabella anonimizzata con l'algoritmo Mondrian.
+
+### Setup del Test
+
+- Database: con SQLite salvato in memoria
+- Dataset: Adult
+- Attributo di query d'esempio: 'age'
+- Valore di query d'esempio: '39' (o eventualmente un intervallo equivalente per le tabelle anonimizzate)
+
+```
+row count before sanitizing: 32561
+row count sanitized: 30162
+
+Colonne dei dati originali: Index(['age', 'work_class', 'final_weight', 'education', 'education_num',
+       'marital_status', 'occupation', 'relationship', 'race', 'gender',
+       'capital_gain', 'capital_loss', 'hours_per_week', 'native_country',
+       'class'],
+      dtype='object')
+Colonne dei dati anonimizzati (Samarati): Index(['age', 'gender', 'race', 'marital_status', 'occupation', 'work_class',
+       'final_weight', 'education', 'education_num', 'relationship',
+       'capital_gain', 'capital_loss', 'hours_per_week', 'native_country',
+       'class'],
+      dtype='object')
+Colonne dei dati anonimizzati (Mondrian): Index(['age', 'education_num', 'occupation', 'work_class', 'final_weight',
+       'education', 'marital_status', 'relationship', 'race', 'gender',
+       'capital_gain', 'capital_loss', 'hours_per_week', 'native_country',
+       'class'],
+      dtype='object')
+
+Prime righe dei dati originali:
+   age        work_class  final_weight  education  education_num      marital_status  ...  gender capital_gain capital_loss hours_per_week  native_country  class
+0   39         State-gov         77516  Bachelors             13       Never-married  ...    Male         2174            0             40   United-States  <=50K
+1   50  Self-emp-not-inc         83311  Bachelors             13  Married-civ-spouse  ...    Male            0            0             13   United-States  <=50K
+2   38           Private        215646    HS-grad              9            Divorced  ...    Male            0            0             40   United-States  <=50K
+3   53           Private        234721       11th              7  Married-civ-spouse  ...    Male            0            0             40   United-States  <=50K
+4   28           Private        338409  Bachelors             13  Married-civ-spouse  ...  Female            0            0             40            Cuba  <=50K
+
+[5 rows x 15 columns]
+
+Prime righe dei dati anonimizzati (Samarati):
+        age gender race marital_status         occupation   work_class  ...   relationship capital_gain  capital_loss hours_per_week  native_country  class
+0  (35, 40)   Male    *              *       Adm-clerical    State-gov  ...  Not-in-family         2174             0             40   United-States  <=50K
+1  (35, 40)   Male    *              *  Handlers-cleaners      Private  ...  Not-in-family            0             0             40   United-States  <=50K
+2  (35, 40)   Male    *              *    Exec-managerial      Private  ...        Husband            0             0             80   United-States   >50K
+3  (35, 40)   Male    *              *              Sales      Private  ...        Husband            0             0             50   United-States  <=50K
+4  (35, 40)   Male    *              *    Farming-fishing  Federal-gov  ...        Husband            0             0             40   United-States  <=50K
+
+[5 rows x 15 columns]
+
+Prime righe dei dati anonimizzati (Mondrian):
+     age education_num         occupation work_class  final_weight education marital_status  ...   race  gender capital_gain  capital_loss  hours_per_week  native_country  class
+0  17-19           1-7      Other-service    Private        309634      11th  Never-married  ...  White  Female            0             0              22   United-States  <=50K
+1  17-19           1-7  Handlers-cleaners    Private         25828      11th  Never-married  ...  White    Male            0             0              16   United-States  <=50K
+2  17-19           1-7              Sales    Private        140164      11th  Never-married  ...  White  Female            0             0              40   United-States  <=50K
+3  17-19           1-7              Sales    Private         65368      11th  Never-married  ...  White  Female            0             0              12   United-States  <=50K
+4  17-19           1-7      Other-service    Private        245918      11th  Never-married  ...  White    Male            0             0              12   United-States  <=50K
+
+[5 rows x 15 columns]
+
+Query sulla tabella originale:
+SELECT * FROM original WHERE age = '39'
+
+Query sulla tabella anonimizzata (Samarati):
+SELECT * FROM anonymizedS WHERE "age" = "(35, 40)"
+
+Query sulla tabella anonimizzata (Mondrian):
+SELECT * FROM anonymizedM WHERE "age" = "39" OR "age" = "38-47" OR "age" = "38-48"
+
+Tempo medio di accesso (tabella originale): 0.0068 secondi
+Tempo medio di accesso (tabella anonimizzata con Samarati): 0.0167 secondi
+Tempo medio di accesso (tabella anonimizzata con Mondrian): 0.0066 secondi
+
+Numero di righe ritornate (tabella originale): 786
+Numero di righe ritornate (tabella anonimizzata con Samarati): 4085
+Numero di righe ritornate (tabella anonimizzata con Mondrian): 956
+```
+
+### Query Eseguite
+
+1. Tabella originale:
+   ```sql
+   SELECT * FROM original WHERE age = '39'
+  ```
+2. Tabella anonimizzata con Samarati:
+  ```sql
+  SELECT * FROM anonymizedS WHERE "age" = "(35, 40)"
+  ```
+
+3. Tabella anonimizzata con Mondrian:
+  ```sql
+  SELECT * FROM anonymizedM WHERE "age" = "39" OR "age" = "38-47" OR "age" = "38-48"
+  ```
+
+### Risultati
+  Tempo medio di accesso (tabella originale): 0.0068 secondi
+  Tempo medio di accesso (tabella anonimizzata con Samarati): 0.0167 secondi
+  Tempo medio di accesso (tabella anonimizzata con Mondrian): 0.0066 secondi
+
+  Numero di righe ritornate (tabella originale): 786
+  Numero di righe ritornate (tabella anonimizzata con Samarati): 4085
+  Numero di righe ritornate (tabella anonimizzata con Mondrian): 956
+
+- Il tempo di accesso alla tabella anonimizzata con Samarati è circa 2 volte e mezzo più lento rispetto alla tabella originale, mentre l'accesso alla tabella anonimizzata con Mondrian è paragonabile all'originale, la differenza tra i due algoritmi di anonimizzazione è probabilmente data dal fatto che l'anonimizzazione tramite l'algoritmo Mondrian (generalizzazione tramite cluster) permette la suddivisione in maniera più efficiente e quindi vengono analizzate meno tuple.
+- Entrambe le tabelle anonimizzate restituiscono più righe rispetto all'originale, a causa della generalizzazione, in particolare l'algoritmo Samarati restituisce circa 5 volte più delle righe rispetto alla tabella originale mentre Mondrian restituisce poche righe in più dell'originale.
+
+Ne ricaviamo che: 
+- L'anonimizzazione con Samarati ha un impatto maggiore sia in termini di tempo di accesso che riguardo la precisione dei risultati.
+- L'anonimizzazione con Mondrian offre un buon compromesso, mantenendo tempi di accesso simili all'originale e una precisione dei risultati relativamente più alta rispetto a Samarati.
+
+### Risultati
+
+I test di performance hanno prodotto i seguenti risultati:
+
+**Tempi medi di accesso:**
+- Tabella originale: 0.0068 secondi
+- Tabella anonimizzata con Samarati: 0.0167 secondi
+- Tabella anonimizzata con Mondrian: 0.0066 secondi
+
+**Numero di righe restituite:**
+- Tabella originale: 786
+- Tabella anonimizzata con Samarati: 4085
+- Tabella anonimizzata con Mondrian: 956
+
+**Analisi comparativa:**
+
+1. **Efficienza di accesso:**
+   L'anonimizzazione mediante l'algoritmo Samarati ha comportato un incremento del tempo di accesso di circa 2.5 volte rispetto alla tabella originale. In contrasto, l'algoritmo Mondrian ha mantenuto tempi di accesso comparabili a quelli della tabella non anonimizzata. Questa diversità può essere attribuita alla diversa struttura di generalizzazione impiegata dai due algoritmi: la generalizzazione basata su cluster di Mondrian consente una partizione più efficiente dei dati che risulta in un numero inferiore di tuple restituite.
+
+2. **Precisione dei risultati:**
+   Entrambe le tecniche di anonimizzazione hanno portato a un aumento del numero di righe restituite, fenomeno attribuibile al processo di generalizzazione. Nello specifico, l'algoritmo Samarati ha prodotto un incremento di circa 5 volte nel numero di righe restituite rispetto alla tabella originale, mentre l'algoritmo Mondrian ha generato un aumento più contenuto, prossimo ai valori della tabella non anonimizzata.
+
+In conclusione:
+
+- L'anonimizzazione mediante l'algoritmo Samarati dimostra un impatto significativo sia in termini di efficienza di accesso che di precisione dei risultati. Questo suggerisce che, sebbene possa offrire un elevato livello di privacy, potrebbe comportare compromessi in termini di performance.
+
+- L'algoritmo Mondrian, d'altra parte, presenta un equilibrio più favorevole, mantenendo tempi di accesso paragonabili alla tabella originale e offrendo una precisione dei risultati relativamente più elevata rispetto all'approccio Samarati. Ciò indica che Mondrian potrebbe rappresentare una soluzione più adatta in scenari che richiedono un bilanciamento ottimale tra privacy, efficienza di accesso e accuratezza dei dati.
+
+
 ## Conclusioni
 L'esecuzione degli algoritmi di k-anonimato, Samarati e Mondrian, sui dataset Adult e Bank dimostra come entrambi i metodi funzionano efficacemente nell'anonimizzazione dei dati rispettando tutti i vincoli del k-anonimato.
 

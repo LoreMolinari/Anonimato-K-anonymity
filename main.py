@@ -1,4 +1,5 @@
 import argparse
+import pandas as pd
 from algorithms.samarati_bank import samaratiB, LatticeB
 from algorithms.mondrian_bank import mondrianB
 from algorithms.samarati import samarati, Lattice
@@ -32,12 +33,14 @@ def main(config):
             print('\n\nmetrica di loss:', loss_metric)
             print('\nvettore delle generalizzazioni:', vector)
             print('\nsoppressione massima:', sup)
+            other_columns = [col for col in data['table'].columns if col not in data['quasi_id'] + [data['sensitive']]]
             anonymized_table = anonymized_table[data['quasi_id'] + [data['sensitive']]]
+            anonymized_table = pd.concat([anonymized_table, data['table'][other_columns]], axis=1)
             display_tableB(anonymized_table)
             
             # Salvtaggio risultati
-            anonymized_table.to_csv('results/samarati_bank.csv', header=None, index=None)
-            data['table'].to_csv('results/original.csv', header=None, index=None)
+            anonymized_table.to_csv('results/samarati_bank.csv', index=False)
+            data['table'].to_csv('results/originalB.csv', index=False)
 
         elif config['mondrian']:
             table = data['table']
@@ -61,12 +64,14 @@ def main(config):
                     table[attr] = recover_categorical_mondrian(table[attr].tolist(), encoders[attr])
 
             print('\n\nmetrica di loss:', loss_metric)
+            other_columns = [col for col in data['table'].columns if col not in data['quasi_id'] + [data['sensitive']]]
             anonymized_table = anonymized_table[data['quasi_id'] + [data['sensitive']]]
+            anonymized_table = pd.concat([anonymized_table, data['table'][other_columns]], axis=1)
             display_tableB(anonymized_table)
             
             # Salvataggio risultati
-            anonymized_table.to_csv('results/mondrian_bank.csv', header=None, index=None)
-            data['table'].to_csv('results/original.csv', header=None, index=None)
+            anonymized_table.to_csv('results/mondrian_bank.csv', index=False)
+            data['table'].to_csv('results/originalB.csv', index=False)
     else:
         data = load_data(config=config)
         
@@ -92,12 +97,14 @@ def main(config):
             print('\n\nmetrica di loss:', loss_metric)
             print('\nvettore delle generalizzazioni:', vector)
             print('\nsoppressione massima:', sup)
+            other_columns = [col for col in data['table'].columns if col not in data['quasi_id'] + [data['sensitive']]]
             anonymized_table = anonymized_table[data['quasi_id'] + [data['sensitive']]]
+            anonymized_table = pd.concat([anonymized_table, data['table'][other_columns]], axis=1)
             display_table(anonymized_table)
             
             # Salvtaggio risultati
-            anonymized_table.to_csv('results/samarati.csv', header=None, index=None)
-            data['table'].to_csv('results/original.csv', header=None, index=None)
+            anonymized_table.to_csv('results/samarati.csv', index=False)
+            data['table'].to_csv('results/original.csv', index=False)
             
         elif config['mondrian']:
             table = data['table']
@@ -121,12 +128,14 @@ def main(config):
                     table[attr] = recover_categorical_mondrian(table[attr].tolist(), encoders[attr])
 
             print('\n\nmetrica di loss:', loss_metric)
+            other_columns = [col for col in data['table'].columns if col not in data['quasi_id'] + [data['sensitive']]]
             anonymized_table = anonymized_table[data['quasi_id'] + [data['sensitive']]]
+            anonymized_table = pd.concat([anonymized_table, data['table'][other_columns]], axis=1)
             display_table(anonymized_table)
             
             # Salvtaggio risultati
-            anonymized_table.to_csv('results/mondrian.csv', header=None, index=None)
-            data['table'].to_csv('results/original.csv', header=None, index=None)
+            anonymized_table.to_csv('results/mondrian.csv', index=False)
+            data['table'].to_csv('results/original.csv', index=False)
 
     return loss_metric
     
